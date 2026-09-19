@@ -9,15 +9,15 @@ class courierDelivery(search.SearchProblem):
         self.goal_state = goal_state
         self.needsHeuristic = needsHeuristic
         self.vertices = []
-        self.weights = {
+        self.weights = { # Also depends on the track type's assumed speed limits
             'M': 1.0, # Main Roads/ Highways receive no penalty
-            'S': 1.2, # Standard Roads have a trivial penalty
+            'S': 1.2, # Standard Roads have a minimal penalty
             'N': 1.8  # Narrow Roads have a significant penalty as they require the courier to travel via a bike
         }
         self.switchCost = {
             'M': 0.0, # No need to switch
             'S': 0.0, # No need to switch
-            'N': 3.0  # Only Narrow Roads have a switching cost since the van has to wait for a bike to come
+            'N': 3.0  # Only Narrow Roads have a switching cost since the van has to wait for a bike to come and a handover has to be done
         }
 
         with open(connectionsFile) as connections:

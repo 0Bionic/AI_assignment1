@@ -103,7 +103,7 @@ def aStarSearch(problem):
         current_state, path, cost = openStates.pop()
 
         if problem.isGoalState(current_state):
-            print("Nodes Expanded (A*): ", nodes_expanded)
+            # print("Nodes Expanded (A*): ", nodes_expanded)
             # Returns List of Actions, Number of nodes expanded, Cost from Start State
             return (path, nodes_expanded, cost)
 
@@ -144,7 +144,7 @@ def dijkstraSearch(problem):
         current_state, path, cost = openStates.pop()
 
         if problem.isGoalState(current_state):
-            print("Nodes Expanded (Dijsktra's): ", nodes_expanded)
+            # print("Nodes Expanded (Dijsktra's): ", nodes_expanded)
             return (path, nodes_expanded, cost)
 
         if current_state not in exploredStates:
