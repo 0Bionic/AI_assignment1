@@ -4,10 +4,49 @@ import util
 class robotNavigation(search.SearchProblem):
 
     """
-    A subclass of SearchProblem
-    Needs:
-    width, height, start_pos (x,y), goal_pos (x,y), obstacles - a list of tuples using cartesian
-    coordinates and lastly needs_heuristic - False by default.
+    Robot Navigation with Obstacles — SearchProblem formulation.
+
+    Find a path from a start cell to a goal cell on a 2D grid while avoiding
+    obstacles. Works with any width/height, start, goal, and obstacle layout.
+
+    Constructor args:
+        width, height       — grid size
+        start_pos, goal_pos — (x, y) Cartesian coordinates
+        obstacles           — list of (x, y) obstacle cells
+        needs_heuristic     — if True, A* uses Euclidean distance (default False)
+
+    Formulation:
+        1. State representation
+           A state is a free grid cell (x, y). Obstacles and out-of-bounds
+           cells are not valid states.
+
+        2. Initial state
+           The starting position start_pos (marked S on the grid).
+
+        3. Goal state
+           The goal position goal_pos (marked G). A state is a goal iff
+           state == goal_pos.
+
+        4. Possible actions
+           Four moves: 'up', 'down', 'left', 'right'
+           (dy=+1, dy=-1, dx=-1, dx=+1 respectively).
+
+        5. Successor function
+           For each action, the successor is (x+dx, y+dy) if that cell is
+           inside the grid and not an obstacle. Returns triples
+           (successor_state, action, step_cost).
+
+        6. Action cost
+           Every legal move has cost 1. Path cost is the number of moves.
+
+        7. Heuristic (for A* Search)
+           Euclidean distance from the current cell to the goal:
+           h(state) = sqrt((x - goal_x)^2 + (y - goal_y)^2).
+           Admissible for unit-cost 4-directional movement. Returns 0 when
+           needs_heuristic is False (Dijkstra-style behaviour).
+
+    Grid legend (see printCurrentState):
+        S = start, G = goal, # = obstacle, . = free cell
     """
 
     def __init__(self, width, height, start_pos, goal_pos, obstacles, needs_heuristic = False):

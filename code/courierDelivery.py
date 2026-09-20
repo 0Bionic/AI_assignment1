@@ -3,8 +3,61 @@ import search
 
 class courierDelivery(search.SearchProblem):
 
-    def __init__(self, start_state, goal_state, connectionsFile, heuristicsFile, trackTypeFile, needsHeuristic = False):
+    """
+    Courier Delivery Route Planning — SearchProblem formulation.
 
+    Find a lowest-cost route from a start area to a goal area on Karachi's
+    road network (loaded from Connections.csv, TrackType.csv, heuristics.csv).
+
+    Constructor args:
+        start_state, goal_state — area name strings (e.g. 'Saddar (Hub)')
+        connectionsFile         — pairwise distances between areas
+        heuristicsFile          — heuristic estimates between area pairs
+        trackTypeFile           — road type of each direct link (M / S / N)
+        needsHeuristic          — if True, A* uses the CSV heuristic (default False)
+
+    Formulation:
+        1. State representation
+           A state is a city area (string), i.e. a vertex in the road graph
+           (e.g. 'Saddar (Hub)', 'Korangi', 'DHA').
+
+        2. Initial state
+           The courier's starting area start_state (often the hub).
+
+        3. Goal state
+           The delivery destination goal_state. A state is a goal iff
+           state == goal_state.
+
+        4. Possible actions
+           Travel from the current area to a directly connected neighboring
+           area. The action is named by the destination area.
+
+        5. Successor function
+           Successors are the outbound edges of the current area in the
+           graph. Each successor is a triple
+           (next_area, action=next_area, step_cost).
+           Only direct links from the CSV are used (distance not 0 or -1,
+           and track type not -1).
+
+        6. Action cost (including road types)
+           For a direct link with raw distance d and track type t:
+               cost = (d * weight[t]) + switchCost[t]
+           where:
+               M (Main / Highway): weight 1.0, switch 0.0  — no penalty
+               S (Standard):       weight 1.2, switch 0.0  — mild speed penalty
+               N (Narrow):         weight 1.8, switch 3.0  — bike segment;
+                                   switch covers van to bike handover delay
+           Path cost is the sum of edge costs along the route.
+
+        7. Heuristic (for A* Search)
+           Lookup from heuristics.csv:
+               h(state) = heuristicDict[(state, goal_state)]
+           Estimated remaining cost/distance to the goal. Returns 0 when
+           needsHeuristic is False (Dijkstra-style behaviour).
+    """
+
+
+    def __init__(self, start_state, goal_state, connectionsFile, heuristicsFile, trackTypeFile, needsHeuristic = False):
         self.start_state = start_state
         self.goal_state = goal_state
         self.needsHeuristic = needsHeuristic
@@ -114,21 +167,6 @@ class courierDelivery(search.SearchProblem):
 
         return self.heuristicDict[(state, self.goal_state)]
 
-        
-
-    # Helper function to display the graph as I work with the problem
-    def print_graph(self):
-        print(f"{'Courier Routing Graph':^60}")
-        print("=" * 60)
-        
-        for origin, edges in self.graph.items():
-            print(f"Area: {origin}")
-            print(f"   {'Destination':<20} | {'Cost':<5} | {'Track'}")
-            print("   " + "-" * 45)
-            
-            for destination, distance, track_type in edges:
-                print(f"   {destination:<20} | {distance:<5.1f} |   {track_type}")
-        print("\n" + "=" * 60)
 
 # def main():
 #     courier = courierDelivery('Saddar (Hub)', 'Korangi', "..\csv\Connections.csv", "..\csv\heuristics.csv", "..\csv\TrackType.csv", True)

@@ -116,7 +116,7 @@ def aStarSearch(problem):
                     new_path = path + [action]
 
                     openStates.push((next_state, new_path, new_cost), new_cost + problem.getHeuristic(next_state))
-        nodes_expanded += 1
+            nodes_expanded += 1
 
     return ([], 0, 0)
 
@@ -157,7 +157,7 @@ def dijkstraSearch(problem):
 
                     openStates.push((next_state, new_path, new_cost), new_cost)
 
-        nodes_expanded += 1
+            nodes_expanded += 1
 
     return ([], 0, 0)
 
